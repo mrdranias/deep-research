@@ -17,6 +17,23 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
+//added a function so can ask long questions (Chatgpt https://chatgpt.com/c/67bf83e1-818c-800f-9151-a2d6bf8f0896?model=gpt-4o)
+function askMultiLineQuestion(query: string): Promise<string> {
+  return new Promise(resolve => {
+    console.log(query);
+    let response = "";
+    rl.on("line", line => {
+      if (!line.trim()) {  // Stop reading on empty line
+        rl.removeAllListeners("line");
+        resolve(response.trim());
+      } else {
+        response += (response ? "\n" : "") + line;
+      }
+    });
+  });
+}
+
+
 // Helper function to get user input
 function askQuestion(query: string): Promise<string> {
   return new Promise(resolve => {
@@ -26,10 +43,12 @@ function askQuestion(query: string): Promise<string> {
   });
 }
 
+
 // run the agent
 async function run() {
   // Get initial query
-  const initialQuery = await askQuestion('What would you like to research? ');
+  // const initialQuery = await askQuestion('What would you like to research? ');
+  const initialQuery = await askMultiLineQuestion("What would you like to research? (Enter blank line to finish)");
 
   // Get breath and depth parameters
   const breadth =
