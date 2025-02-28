@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { o3MiniModel } from './ai/providers';
 import { systemPrompt } from './prompt';
 
+// this is the query as managed by the Vercel 'ai' library which has different ways to call an AI API eg generateImage, generateText, generateObject
 export async function generateFeedback({
   query,
   numQuestions = 3,
@@ -11,7 +12,6 @@ export async function generateFeedback({
   query: string;
   numQuestions?: number;
 }) {
-  // ai library has a number of different ways to call to an AI API eg generateImage, generateText, generateObject.
   // generateObject represents a high level query to openai via API using the ai library which is most equivalent to langchain
   // the ai protocol hides the request and return message processing and assigns the return message to an object attribute like pydantic.
   // zod is a high level library for representing json schema and processing incoming messages using a json schema pydantic is considered and equivalent
