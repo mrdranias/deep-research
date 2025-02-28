@@ -76,6 +76,7 @@ async function run() {
   );
 
   // Collect answers to follow-up questions
+  //ts arrays are pushed (FIFO) and popped (LIFO) or can be pulled by index like python.
   const answers: string[] = [];
   for (const question of followUpQuestions) {
     const answer = await askQuestion(`\n${question}\nYour answer: `);
@@ -83,6 +84,7 @@ async function run() {
   }
 
   // Combine all information for deep research
+  // the var combinedQuery joins the initial query and Q&A for insertion in future prompts.
   const combinedQuery = `
 Initial Query: ${initialQuery}
 Follow-up Questions and Answers:
