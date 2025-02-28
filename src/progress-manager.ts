@@ -1,5 +1,8 @@
 import { ResearchProgress } from './deep-research';
 
+
+// just a progress bar
+
 export class ProgressManager {
   private lastProgress: ResearchProgress | undefined;
   private progressLines: number = 4; // Fixed number of lines for progress display
