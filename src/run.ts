@@ -47,6 +47,8 @@ function askQuestion(query: string): Promise<string> {
 // run the agent
 // calls these major functions: askQuestion, generateFeedback, deepResearch, writeFinalReport, writeFile
 async function run() {
+
+  // 1. SET UP REPORT TOPIC
   // Get initial query
   // replace the original askQuestion function with Multiline-- it is believed new line characters cause bugs.
   // const initialQuery = await askQuestion('What would you like to research? ');
@@ -98,6 +100,7 @@ ${followUpQuestions.map((q: string, i: number) => `Q: ${q}\nA: ${answers[i]}`).j
 
   log('\nStarting research with progress tracking...\n');
 
+  // 2. DEEP RESEACH ROUTINE TO GATHER LEARNINGS
   // next major stage in processing: deepResearch.
   const { learnings, visitedUrls } = await deepResearch({
     query: combinedQuery,
@@ -114,6 +117,8 @@ ${followUpQuestions.map((q: string, i: number) => `Q: ${q}\nA: ${answers[i]}`).j
   );
   log('Writing final report...');
 
+  // 3. WRITE AND SAVE REPORT
+  // collects query, amendments, learning and makes last call to AI API to generate report.
   const report = await writeFinalReport({
     prompt: combinedQuery,
     learnings,
