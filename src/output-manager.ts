@@ -1,5 +1,7 @@
 import { ResearchProgress } from './deep-research';
 
+//IO and progress bar management -- pulls status and prints to screen
+
 export class OutputManager {
   private progressLines: number = 4;
   private progressArea: string[] = [];
