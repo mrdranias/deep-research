@@ -45,8 +45,10 @@ function askQuestion(query: string): Promise<string> {
 
 
 // run the agent
+// calls these major functions: askQuestion, generateFeedback, deepResearch, writeFinalReport, writeFile
 async function run() {
   // Get initial query
+  // replace the original askQuestion function with Multiline-- it is believed new line characters cause bugs.
   // const initialQuery = await askQuestion('What would you like to research? ');
   const initialQuery = await askMultiLineQuestion("What would you like to research? (Enter blank line to finish)");
 
@@ -76,7 +78,7 @@ async function run() {
   );
 
   // Collect answers to follow-up questions
-  //ts arrays are pushed (FIFO) and popped (LIFO) or can be pulled by index like python.
+  // ts arrays are pushed (FIFO) and popped (LIFO) or can be pulled by index like python.
   const answers: string[] = [];
   for (const question of followUpQuestions) {
     const answer = await askQuestion(`\n${question}\nYour answer: `);
@@ -85,6 +87,7 @@ async function run() {
 
   // Combine all information for deep research
   // the var combinedQuery joins the initial query and Q&A for insertion in future prompts.
+  // the spacing is unfortunate and reflects that spacing is decorative in ts.
   const combinedQuery = `
 Initial Query: ${initialQuery}
 Follow-up Questions and Answers:
@@ -94,7 +97,8 @@ ${followUpQuestions.map((q: string, i: number) => `Q: ${q}\nA: ${answers[i]}`).j
   log('\nResearching your topic...');
 
   log('\nStarting research with progress tracking...\n');
-  
+
+  // next major stage in processing: deepResearch.
   const { learnings, visitedUrls } = await deepResearch({
     query: combinedQuery,
     breadth,
