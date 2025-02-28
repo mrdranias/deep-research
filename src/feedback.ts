@@ -5,6 +5,7 @@ import { o3MiniModel } from './ai/providers';
 import { systemPrompt } from './prompt';
 
 // this is the query as managed by the Vercel 'ai' library which has different ways to call an AI API eg generateImage, generateText, generateObject
+// https://sdk.vercel.ai/docs/reference/ai-sdk-core/generate-text
 export async function generateFeedback({
   query,
   numQuestions = 3,
