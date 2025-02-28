@@ -11,6 +11,8 @@ export async function generateFeedback({
   query: string;
   numQuestions?: number;
 }) {
+  // generateObject represents a high level query to openai via API using the ai library which is most equivalent to langchain
+  // zod is a high level library for representing json schema and processing incoming messages using a json schema pydantic is considered and equivalent
   const userFeedback = await generateObject({
     model: o3MiniModel,
     system: systemPrompt(),
@@ -23,6 +25,6 @@ export async function generateFeedback({
         ),
     }),
   });
-
+  // this seems to refer to the structure of the z object schema so it seems the response is encoded as userFeedback.object.
   return userFeedback.object.questions.slice(0, numQuestions);
 }
