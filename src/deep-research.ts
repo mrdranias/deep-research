@@ -128,39 +128,7 @@ async function processSerpResult({
   return res.object;
 }
 
-// this is the final call to the AI, it sends the collected information and reveals the importance of zod: it can request a md document (just a schema?)
-export async function writeFinalReport({
-  prompt,
-  learnings,
-  visitedUrls,
-}: {
-  prompt: string;
-  learnings: string[];
-  visitedUrls: string[];
-}) {
-  const learningsString = trimPrompt(
-    learnings
-      .map(learning => `<learning>\n${learning}\n</learning>`)
-      .join('\n'),
-    150_000,
-  );
-
-  const res = await generateObject({
-    model: o3MiniModel,
-    system: systemPrompt(),
-    prompt: `Given the following prompt from the user, write a final report on the topic using the learnings from research. Make it as as detailed as possible, aim for 3 or more pages, include ALL the learnings from research:\n\n<prompt>${prompt}</prompt>\n\nHere are all the learnings from previous research:\n\n<learnings>\n${learningsString}\n</learnings>`,
-    schema: z.object({
-      reportMarkdown: z
-        .string()
-        .describe('Final report on the topic in Markdown'),
-    }),
-  });
-
-  // Append the visited URLs section to the report
-  const urlsSection = `\n\n## Sources\n\n${visitedUrls.map(url => `- ${url}`).join('\n')}`;
-  return res.object.reportMarkdown + urlsSection;
-}
-
+// manages SERP queries, progress updates
 export async function deepResearch({
   query,
   breadth,
@@ -284,4 +252,39 @@ export async function deepResearch({
     learnings: [...new Set(results.flatMap(r => r.learnings))],
     visitedUrls: [...new Set(results.flatMap(r => r.visitedUrls))],
   };
+}
+
+
+
+// this is the final call to the AI, it sends the collected information and reveals the importance of zod: it can request a md document (just a schema?)
+export async function writeFinalReport({
+  prompt,
+  learnings,
+  visitedUrls,
+}: {
+  prompt: string;
+  learnings: string[];
+  visitedUrls: string[];
+}) {
+  const learningsString = trimPrompt(
+    learnings
+      .map(learning => `<learning>\n${learning}\n</learning>`)
+      .join('\n'),
+    150_000,
+  );
+
+  const res = await generateObject({
+    model: o3MiniModel,
+    system: systemPrompt(),
+    prompt: `Given the following prompt from the user, write a final report on the topic using the learnings from research. Make it as as detailed as possible, aim for 3 or more pages, include ALL the learnings from research:\n\n<prompt>${prompt}</prompt>\n\nHere are all the learnings from previous research:\n\n<learnings>\n${learningsString}\n</learnings>`,
+    schema: z.object({
+      reportMarkdown: z
+        .string()
+        .describe('Final report on the topic in Markdown'),
+    }),
+  });
+
+  // Append the visited URLs section to the report
+  const urlsSection = `\n\n## Sources\n\n${visitedUrls.map(url => `- ${url}`).join('\n')}`;
+  return res.object.reportMarkdown + urlsSection;
 }
