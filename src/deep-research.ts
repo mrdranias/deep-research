@@ -128,6 +128,7 @@ async function processSerpResult({
   return res.object;
 }
 
+// this is the final call to the AI, it sends the collected information and reveals the importance of zod: it can request a md document (just a schema?)
 export async function writeFinalReport({
   prompt,
   learnings,
