@@ -34,6 +34,7 @@ type ResearchResult = {
 };
 
 // increase this if you have higher API rate limits
+// need to check what firecrawl is doing.....
 const ConcurrencyLimit = 2;
 
 // Initialize Firecrawl with optional API key and optional base url
@@ -134,8 +135,9 @@ async function processSerpResult({
 }
 
 // manages SERP queries, progress updates
-// seems like depth is an iterative/recursive index
+// seems like depth is  a recursive index
 // breadth is the number of SERP queries to generate.
+// run passes the progress update function here.
 export async function deepResearch({
   query,
   breadth,
@@ -165,19 +167,22 @@ export async function deepResearch({
     onProgress?.(progress);
   };
 
+  // call to LLM which returns an array of [(query, researchGoal)]
   const serpQueries = await generateSerpQueries({
     query,
     learnings,
     numQueries: breadth,
   });
   
+  // update progress manager
   reportProgress({
     totalQueries: serpQueries.length,
     currentQuery: serpQueries[0]?.query
   });
   
   const limit = pLimit(ConcurrencyLimit);
-
+  
+  // call to firecrawl to do research.
   const results = await Promise.all(
     serpQueries.map(serpQuery =>
       limit(async () => {
