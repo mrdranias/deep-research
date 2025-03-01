@@ -129,6 +129,8 @@ async function processSerpResult({
 }
 
 // manages SERP queries, progress updates
+// seems like depth is an iterative/recursive index
+// breadth is the number of SERP queries to generate.
 export async function deepResearch({
   query,
   breadth,
