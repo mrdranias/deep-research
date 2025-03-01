@@ -1,7 +1,7 @@
 import { ResearchProgress } from './deep-research';
 
 
-// just a progress bar
+// just a progress bar -- may be a prototype for output-manager? Not sure who calls it.
 
 export class ProgressManager {
   private lastProgress: ResearchProgress | undefined;
