@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import { o3MiniModel, trimPrompt } from './ai/providers';
 import { systemPrompt } from './prompt';
+
 / /output manager is storing data to for progress updates
 import { OutputManager } from './output-manager';
 
@@ -43,6 +44,9 @@ const firecrawl = new FirecrawlApp({
 });
 
 // take en user query, return a list of SERP queries
+// aim is to have llm produce a schema that includes a query: z.string().describe("The SERP query") and a researchGoal: z.string().describe("Explanation of the research goal."),
+
+
 async function generateSerpQueries({
   query,
   numQueries = 3,
@@ -83,7 +87,7 @@ async function generateSerpQueries({
     `Created ${res.object.queries.length} queries`,
     res.object.queries,
   );
-
+  // res.object.queries returns an array of query and researchGoal
   return res.object.queries.slice(0, numQueries);
 }
 
