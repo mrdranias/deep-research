@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import { o3MiniModel, trimPrompt } from './ai/providers';
 import { systemPrompt } from './prompt';
+/ /output manager is storing data to for progress updates
 import { OutputManager } from './output-manager';
 
 // Initialize output manager for coordinated console/progress output
