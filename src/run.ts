@@ -3,6 +3,8 @@ import * as readline from 'readline';
 
 import { deepResearch, writeFinalReport } from './deep-research';
 import { generateFeedback } from './feedback';
+
+// output-manager.ts is managing progress updates
 import { OutputManager } from './output-manager';
 
 const output = new OutputManager();
