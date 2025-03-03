@@ -40,6 +40,7 @@ const ConcurrencyLimit = 2;
 // Initialize Firecrawl with optional API key and optional base url
 
 const firecrawl = new FirecrawlApp({
+  // ?? is an 'if null then' ts operator that says if null then return ''
   apiKey: process.env.FIRECRAWL_KEY ?? '',
   apiUrl: process.env.FIRECRAWL_BASE_URL,
 });
@@ -47,7 +48,7 @@ const firecrawl = new FirecrawlApp({
 // take en user query, return a list of SERP queries
 // aim is to have llm produce a schema that includes a query: z.string().describe("The SERP query") and a researchGoal: z.string().describe("Explanation of the research goal."),
 
-
+// asks ai to generate a (breadth-many) list of search queries
 async function generateSerpQueries({
   query,
   numQueries = 3,
@@ -92,6 +93,7 @@ async function generateSerpQueries({
   return res.object.queries.slice(0, numQueries);
 }
 
+// takes a search result and produces a learning and a list of follow up questions, (these follow up questions are pursued until depth =0
 async function processSerpResult({
   query,
   result,
@@ -183,6 +185,8 @@ export async function deepResearch({
   const limit = pLimit(ConcurrencyLimit);
   
   // call to firecrawl to do research.
+  // map is an instruction that can be iterative or parallel depending on the async value, but however executed it runs through all queries sequentially.
+  // the routine for each iterative call is (1) send serp to firecrawl, use known formatting to get urls, use processSerpResult to process search result into learning, append learning and url to appropriate lists.
   const results = await Promise.all(
     serpQueries.map(serpQuery =>
       limit(async () => {
@@ -257,7 +261,9 @@ export async function deepResearch({
           };
         }
       }),
+    // close iteration
     ),
+  //close function
   );
 
   return {
