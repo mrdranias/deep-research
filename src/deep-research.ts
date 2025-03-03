@@ -202,11 +202,14 @@ export async function deepResearch({
           const newBreadth = Math.ceil(breadth / 2);
           const newDepth = depth - 1;
 
+          // generate new learnings, citations (URLs) and follow up questions
           const newLearnings = await processSerpResult({
             query: serpQuery.query,
             result,
             numFollowUpQuestions: newBreadth,
           });
+          
+          //appended list of all processed search queries
           const allLearnings = [...learnings, ...newLearnings.learnings];
           const allUrls = [...visitedUrls, ...newUrls];
 
@@ -222,6 +225,7 @@ export async function deepResearch({
               currentQuery: serpQuery.query,
             });
 
+            // recursive call to deepResearch with old query appended with followup question.
             const nextQuery = `
             Previous research goal: ${serpQuery.researchGoal}
             Follow-up research directions: ${newLearnings.followUpQuestions.map(q => `\n${q}`).join('')}
