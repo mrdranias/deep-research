@@ -1,4 +1,10 @@
+import * as fs from 'fs/promises';
+import * as readline from 'readline';
 
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 //added a function so can ask long questions (Chatgpt https://chatgpt.com/c/67bf83e1-818c-800f-9151-a2d6bf8f0896?model=gpt-4o)
 function askMultiLineQuestion(query: string): Promise<string> {
