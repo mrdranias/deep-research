@@ -1,12 +1,12 @@
-FROM node:18-alpine
+FROM node:22
+
+# Install nano
+RUN apt-get update && apt-get install -y nano
 
 WORKDIR /app
-
+COPY package.json package-lock.json ./
+RUN npm install
 COPY . .
-COPY package.json ./
 COPY .env.local ./.env.local
 
-RUN npm install
-
-#CMD ["npm", "run", "docker"]
-CMD ["bash"]
+CMD ["sh"]
