@@ -2,11 +2,33 @@
 import * as fs from 'fs/promises';
 import * as readline from 'readline';
 
-import { o3MiniModel } from './ai/providers';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 
 import { systemPrompt } from './prompt';
+
+
+import { createOpenAI, type OpenAIProviderSettings } from '@ai-sdk/openai';
+import { getEncoding } from 'js-tiktoken';
+
+interface CustomOpenAIProviderSettings extends OpenAIProviderSettings {
+  baseURL?: string;
+}
+
+const openai = createOpenAI({
+  apiKey: process.env.OPENAI_KEY!,
+  baseURL: process.env.OPENAI_ENDPOINT || 'https://api.openai.com/v1',
+} as CustomOpenAIProviderSettings);
+
+const customModel = process.env.OPENAI_MODEL || 'o3-mini';
+
+const o3MiniModel = openai(customModel, {
+  reasoningEffort: customModel.startsWith('o') ? 'medium' : undefined,
+  structuredOutputs: true,
+});
+
+const MinChunkSize = 140;
+const encoder = getEncoding('o200k_base');
 
 
 
