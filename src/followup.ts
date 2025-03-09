@@ -2,7 +2,7 @@
 import * as fs from 'fs/promises';
 import * as readline from 'readline';
 
-import { getModel } from './ai/providers';
+import { o3MiniModel } from './ai/providers';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 
