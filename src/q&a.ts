@@ -32,4 +32,10 @@ Follow-up Questions and Answers:
 ${followUpQuestions.map((q: string, i: number) => `Q: ${q}\nA: ${answers[i]}`).join('\n')}
 `;
 
-  log('\nResearching your topic...');
+  log(`Printing User Prompt with Q & A...`);
+  log(`${combinedQuery} `)
+  log(`breadth=${breadth}, depth=${depth} `)
+  rl.close();
+}
+
+run().catch(console.error);
