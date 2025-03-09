@@ -1,6 +1,10 @@
 import * as fs from 'fs/promises';
 import * as readline from 'readline';
 
+// Helper function for consistent logging
+function log(...args: any[]) {
+  console.log(...args);
+}
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
