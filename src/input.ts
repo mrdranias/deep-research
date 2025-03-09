@@ -60,4 +60,7 @@ async function run() {
   log(`Creating research plan...`);
   log(`${initialQuery} `)
   log(`breadth=${breadth}, depth=${depth} `)
-  
+  rl.close();
+}
+
+run().catch(console.error);
