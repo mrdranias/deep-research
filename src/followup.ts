@@ -15,6 +15,34 @@ interface CustomOpenAIProviderSettings extends OpenAIProviderSettings {
   baseURL?: string;
 }
 
+
+//added a function so can ask long questions (Chatgpt https://chatgpt.com/c/67bf83e1-818c-800f-9151-a2d6bf8f0896?model=gpt-4o)
+function askMultiLineQuestion(query: string): Promise<string> {
+  return new Promise(resolve => {
+    console.log(query);
+    let response = "";
+    rl.on("line", line => {
+      if (!line.trim()) {  // Stop reading on empty line
+        rl.removeAllListeners("line");
+        resolve(response.trim());
+      } else {
+        response += (response ? "\n" : "") + line;
+      }
+    });
+  });
+}
+
+
+// Helper function to get user input
+function askQuestion(query: string): Promise<string> {
+  return new Promise(resolve => {
+    rl.question(query, answer => {
+      resolve(answer);
+    });
+  });
+}
+
+
 const openai = createOpenAI({
   apiKey: process.env.OPENAI_KEY!,
   baseURL: process.env.OPENAI_ENDPOINT || 'https://api.openai.com/v1',
