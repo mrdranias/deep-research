@@ -66,6 +66,11 @@ async function run() {
   const initialQuery = "can pigs fly"
   const breadth = 3
   const depth = 2
+
+  // Generate follow-up questions
+  const followUpQuestions = await generateFeedback({
+    query: initialQuery,
+  });
   
   log(
     '\nTo better understand your research needs, please answer these follow-up questions:',
