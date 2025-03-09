@@ -108,7 +108,7 @@ async function run() {
   // ts arrays are pushed (FIFO) and popped (LIFO) or can be pulled by index like python.
   const answers: string[] = [];
   for (const question of followUpQuestions) {
-    const answer = await askQuestion(`\n${question}\nYour answer: `);
+    const answer = await askMultiLineQuestion(`\n${question}\nYour answer: `);
     answers.push(answer);
   }
 
