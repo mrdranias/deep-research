@@ -13,7 +13,7 @@ COPY requirements.txt ./
 RUN npm install
 
 # Create a virtual environment and install Python dependencies using its pip
-RUN python3 -m venv venv && \
+RUN python3 -m venv jupyter-venv  && \
     venv/bin/pip install --upgrade pip && \
     venv/bin/pip install -r requirements.txt
 
