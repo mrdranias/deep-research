@@ -1,6 +1,6 @@
 numpy
-jupyter
-jupyter-lab
+jupyterlab
+notebook
 rise
 datetime
 requests

@@ -1,23 +1,19 @@
 FROM node:22
 
-# Install Python3, pip, and any other tools
 RUN apt-get update && apt-get install -y python3-full python3-pip nano
+
+# Create venv in an isolated directory (e.g., /venvs/jupyter-venv)
+RUN mkdir -p /venvs && \
+    python3 -m venv /venvs/jupyter-venv && \
+    /venvs/jupyter-venv/bin/pip install --upgrade pip
 
 WORKDIR /app
 
-# Copy dependency definitions
-COPY package.json package-lock.json ./
-COPY requirements.txt ./
+COPY package.json package-lock.json requirements.txt ./
 
-# Install Node.js dependencies
-RUN npm install
+RUN npm install && \
+    /venvs/jupyter-venv/bin/pip install -r requirements.txt
 
-# Create a virtual environment and install Python dependencies using its pip
-RUN python3 -m venv jupyter-venv  && \
-    venv/bin/pip install --upgrade pip && \
-    venv/bin/pip install -r requirements.txt
-
-# Copy the rest of your application files
 COPY . .
 
 CMD ["sh"]
