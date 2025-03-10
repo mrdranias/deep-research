@@ -8,3 +8,5 @@ openai
 pydantic 
 tiktoken
 jupyterlab-rise
+langchain_openai
+dotenv
