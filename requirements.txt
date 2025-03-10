@@ -7,3 +7,4 @@ langchain
 openai 
 pydantic 
 tiktoken
+jupyterlab-rise
