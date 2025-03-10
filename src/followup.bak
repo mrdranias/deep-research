@@ -1,0 +1,133 @@
+import os
+import asyncio
+from datetime import datetime
+from typing import List
+from systemprompt import system_prompt_1
+
+# --- For LangChain LLM and output parsing ---
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+from langchain.output_parsers import StructuredOutputParser
+
+# --- For JSON schema validation using Pydantic ---
+from pydantic import BaseModel, Field
+
+# --- (Optional) For token encoding similar to js-tiktoken ---
+import tiktoken
+
+# --------------------------
+# Define a Pydantic model for the expected output.
+class FeedbackSchema(BaseModel):
+    questions: List[str] = Field(
+        ...,
+        description="Follow up questions to clarify the research direction, maximum number given."
+    )
+
+# Create an output parser that will parse LLM output into our schema.
+output_parser = StructuredOutputParser.from_pydantic_class(FeedbackSchema)
+
+
+# --------------------------
+# Set up the OpenAI LLM via LangChain.
+# (Replace 'gpt-3.5-turbo' with your desired model. Note: 'o3-mini' from the TS code is a placeholder.)
+openai_api_key = os.environ.get("OPENAI_KEY")
+custom_model = os.environ.get("OPENAI_MODEL", "o3-mini")
+llm = ChatOpenAI(
+    openai_api_key=openai_api_key,
+    model_name=custom_model,
+    temperature=0.7
+)
+
+# (Optional) Set up an encoder similar to getEncoding from js-tiktoken.
+MinChunkSize = 140
+encoder = tiktoken.encoding_for_model("o3-mini")  # adjust as needed
+
+# --------------------------
+# Helper functions for interactive user input.
+
+async def ask_multi_line_question(query: str) -> str:
+    """Ask a multi-line question until a blank line is entered."""
+    print(query)
+    lines = []
+    while True:
+        # Run blocking input() in a thread to avoid blocking the event loop.
+        line = await asyncio.to_thread(input)
+        if not line.strip():
+            break
+        lines.append(line)
+    return "\n".join(lines).strip()
+
+async def ask_question(query: str) -> str:
+    """Ask a single-line question."""
+    return await asyncio.to_thread(input, query)
+
+def log(*args):
+    """Simple logging helper."""
+    print(*args)
+
+# --------------------------
+# Function to generate feedback (follow-up questions) using LangChain.
+async def generate_feedback(*, query: str, num_questions: int = 3) -> List[str]:
+    # Build the prompt instructing the LLM to produce follow-up questions in JSON format.
+    prompt_text = (
+        "Given the following query from the user, ask some follow-up questions to clarify the research direction. "
+        f"Return a maximum of {num_questions} questions, but feel free to return less if the original query is clear.\n"
+        "Output the result as a JSON object matching this schema:\n"
+        f'{output_parser.get_format_instructions()}\n'
+        f"<query>{query}</query>"
+    )
+    
+    # Use a prompt template that incorporates the system prompt and the user query.
+    prompt_template = PromptTemplate(
+        input_variables=["system", "query"],
+        template="{system}\n\n" + prompt_text
+    )
+    
+    # Create the LLMChain.
+    chain = LLMChain(llm=llm, prompt=prompt_template, output_parser=output_parser)
+    
+    # Run the chain.
+    response = chain.run({
+        "system": system_prompt_1(),
+        "query": query,
+    })
+    
+    # Parse the result using our schema.
+    # (response is already parsed by the output parser into our Pydantic model.)
+    feedback = response  # Should be an instance of FeedbackSchema
+    return feedback.questions[:num_questions]
+
+# --------------------------
+# Main driver function.
+async def run():
+    initial_query = "can pigs fly"
+    breadth = 3
+    depth = 2
+
+    # Generate follow-up questions using our generate_feedback function.
+    follow_up_questions = await generate_feedback(query=initial_query, num_questions=3)
+    log("\nTo better understand your research needs, please answer these follow-up questions:")
+
+    # Collect answers for each follow-up question.
+    answers = []
+    for question in follow_up_questions:
+        answer = await ask_multi_line_question(f"\n{question}\nYour answer: ")
+        answers.append(answer)
+
+    # Combine the initial query and Q&A for deep research.
+    combined_query = (
+        f"\nInitial Query: {initial_query}\n"
+        "Follow-up Questions and Answers:\n" +
+        "\n".join([f"Q: {q}\nA: {answers[i]}" for i, q in enumerate(follow_up_questions)])
+    )
+
+    log("Printing User Prompt with Q & A...")
+    log(combined_query)
+    log(f"breadth={breadth}, depth={depth}")
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(run())
+    except Exception as e:
+        print(f"Error: {e}")

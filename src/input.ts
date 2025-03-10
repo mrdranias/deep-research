@@ -1,4 +1,3 @@
-import * as fs from 'fs/promises';
 import * as readline from 'readline';
 
 // Helper function for consistent logging
