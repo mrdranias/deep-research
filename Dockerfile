@@ -14,6 +14,8 @@ COPY package.json package-lock.json requirements.txt ./
 RUN npm install && \
     /venvs/jupyter-venv/bin/pip install -r requirements.txt
 
+EXPOSE 8878
+
 COPY . .
 
 CMD ["sh"]

@@ -8,5 +8,5 @@ services:
     tty: true
     stdin_open: true
     ports:
-      - "8777:8777"
+      - "8878:8878"
     command: sh -c "npm install && sh"

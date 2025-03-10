@@ -5,6 +5,6 @@ jupyter-nbextension install rise --py --sys-prefix
 jupyter-nbextension enable rise --py --sys-prefix
 
 # Start Jupyter Lab with fixed token
-jupyter lab --ip=0.0.0.0 --no-browser --port=8777 --NotebookApp.token='t3st'
+jupyter lab --ip=0.0.0.0 --no-browser --port=8878 --NotebookApp.token='t3st'
 
 deactivate
