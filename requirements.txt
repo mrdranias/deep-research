@@ -1,6 +1,7 @@
 numpy
 jupyterlab
 notebook
+jupyter_contrib_nbextensions
 rise
 datetime
 requests
